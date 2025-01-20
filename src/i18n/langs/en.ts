@@ -1,0 +1,61 @@
+export default {
+    person: {
+        nav: {
+            call: 'CALL',
+            email: 'EMAIL',
+            directions: 'DIRECTIONS',
+            language: 'LANGUAGE',
+        },
+        info: {
+            mobile: 'Mobile',
+            telephone: 'Telephone',
+            email: 'Email',
+            show: 'SHOW ON MAP',
+            website: 'Website',
+            save: 'Save Contacts',
+            call: 'Call',
+            cancel: 'Cancel',
+            summary: 'Summary',
+        }
+    },
+    addPerson: {
+        info: {
+            title: 'Your Information',
+            des: 'Fill in your contact details. Not all fields are mandatory.',
+            img: 'Image:',
+            upload: 'Upload',
+            name: 'Name',
+            firstName: 'First Name',
+            lastName: 'Last Name',
+            number: 'Number',
+            mobile: 'Mobile Number',
+            telephone: 'Telephone',
+            email: 'Email',
+            company: 'Company',
+            job: 'Your Job',
+            address: 'Address',
+            addressDesc: 'Enter your Address',
+            website: 'Website',
+            summary: 'Summary',
+            input: 'Please input ',
+        },
+        social: {
+            title: 'Social Media',
+            des: 'Click on the icon to add a social media channel.',
+            addMore: 'Add more',
+            save: 'Save',
+        },
+        address: {
+            changning: 'Changning Avenue West, Shushan District, Hefei City, Anhui Province, China',
+            luhua: 'No. 2, Luhua Road, Baian Industrial Park, High-tech Zone, Hefei City, Anhui Province, China',
+            longchuang: 'No. 1, Longchuang Road, Malong Village Committee, Beijiao Town, Foshan City, Guangdong Province, China',
+            chanye: 'No. 40, Chanye Avenue, Pulu Street, Tongliang District, Chongqing City, China',
+            longquan: 'East of Huashan Road and South of Longquan Road, Chaohu Economic Development Zone, Hefei City, Anhui Province, China',
+            yongjin: 'No. 20, Yongjin Road, High-tech Zone, Anqing City, Anhui Province, China',
+            jiaocha: 'East of the intersection of Huanhu West Road and Yongjin Road, High-tech Zone, Anqing City, Anhui Province, China',
+            xiajia: 'Intersection of Chunzhou Road and Xiajiahu Road, Yijiang District, Wuhu City, Anhui Province, China',
+            beishong: 'No. 23, Lane 5355, Beisong Highway, Chedu Town, Songjiang District, Shanghai, China',
+            chonburi: '700/7, 700/8, 700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110, Thailand'
+        }
+    }
+};
