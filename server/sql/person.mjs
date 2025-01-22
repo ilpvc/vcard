@@ -13,11 +13,12 @@ const addPerson = () => {
         company,
         job,
         address,
+        b_address,
         website,
         summary,
         social_media,
         code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
   // 返回 SQL
   return query;
@@ -38,6 +39,7 @@ const getParam = (person) => {
     person.company || '',          // company
     person.job || '',              // job
     person.address || '',          // address
+    person.b_address || '',
     person.website || '',          // website
     person.summary || '',          // summary
     person.social_media || '',     // social_media: JSON 字符串或空字符串

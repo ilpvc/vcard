@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import {onMounted, ref} from "vue";
-import {NAvatar, NButton, NDrawer, NDrawerContent, NFloatButton} from "naive-ui";
+import {NAvatar, NButton, NDrawer, NDrawerContent, NFloatButton, useMessage} from "naive-ui";
 import {useRoute, useRouter} from "vue-router";
 import {getPersonByCode} from "@/api/person";
 import {useI18n} from 'vue-i18n';
 import {Person, Social} from "@/type/person";
 
-const {locale,t} = useI18n();
+const message = useMessage();
+const {locale, t} = useI18n();
 const isShowPhoneOption = ref(false)
+const isShowShareDrawer = ref(false)
 const router = useRouter()
 const route = useRoute()
 const addressMap = ref({
@@ -23,6 +25,7 @@ const addressMap = ref({
   chonburi: t('addPerson.address.chonburi'),
 });
 
+const showOtherOptions = ref(false);
 
 
 // 初始化 personData
@@ -30,6 +33,7 @@ const personData = ref<Person>({
   id: 0,
   header: "",
   address: "",
+  b_address:'',
   code: "",
   company: "",
   created_at: "",
@@ -43,6 +47,10 @@ const personData = ref<Person>({
   telephone: "",
   website: ""
 });
+
+const companyMap = ref({
+  huitong: t('addPerson.company.huitong'),
+})
 
 const isShowLangOption = ref(false)
 const social = ref<Social>({
@@ -76,10 +84,14 @@ function changeLanguage(lang: string) {
     beishong: t('addPerson.address.beishong'),
     chonburi: t('addPerson.address.chonburi'),
   };
+  companyMap.value = {
+    huitong: t('addPerson.company.huitong'),
+  }
+
 }
 
 function openWebsite() {
-  window.open('https://'+personData.value.website, "_blank");
+  window.open('https://' + personData.value.website, "_blank");
 }
 
 const addToContacts = () => {
@@ -113,19 +125,29 @@ function email() {
 function directions() {
   window.open(`https://www.google.com/maps?q=${addressMap.value[personData.value.address]}`, "_blank");
 }
+
 // 跳转到社交媒体
-function toSocial(s:string){
-  if(s==='weixin'){
+function toSocial(s: string) {
+  if (s === 'weixin') {
     console.log('展示二维码');
     return
   }
-  if(s==='line'){
+  if (s === 'line') {
     window.open(`https://line.me/R/ti/p/~${social.value.line.value}`, "_blank");
     return;
   }
-  if(s==='whatsapp'){
+  if (s === 'whatsapp') {
     window.open(`https://wa.me/${social.value.whatsapp.value}`, "_blank");
   }
+}
+
+// 复制到剪切板
+async function toClipboard() {
+  // 获取当前页面的网址链接
+  const url = window.location.href;
+
+  await navigator.clipboard.writeText(url)
+  message.success('链接已复制到剪切板!')
 }
 
 onMounted(async () => {
@@ -214,7 +236,7 @@ onMounted(async () => {
           <img class="w-8 h-8" src="@/assets/worker.svg" alt="email"/>
         </div>
         <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
-          <div>{{ personData.company }}</div>
+          <div>{{ companyMap[personData.company] }}</div>
           <div class="text-sm text-gray-400">{{ personData.job }}</div>
         </div>
       </div>
@@ -226,7 +248,8 @@ onMounted(async () => {
           <img class="w-8 h-8" src="@/assets/location-gray.svg" alt="email"/>
         </div>
         <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
-          <div>{{ addressMap[personData.address] }}</div>
+          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>
+          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>
           <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
               $t('person.info.show')
             }}
@@ -275,10 +298,33 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <NFloatButton :right="20" :bottom="20" width="3.5rem" height="3.5rem" shape="circle" class="bg-[#0288D1]"
-                @click="toAdd()">
-    <img class="w-8 h-8" src="@/assets/add-white.svg" alt="add"/>
-  </NFloatButton>
+  <div class="fixed right-6 bottom-6 flex flex-col space-y-2">
+    <transition name="fade">
+      <div v-if="showOtherOptions" class="bg-[#0288D1] w-14 h-14 flex justify-center items-center rounded-full"
+           @click="toAdd">
+        <img class="w-8 h-8" src="@/assets/add-person.svg" alt="add"/>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div v-if="showOtherOptions" class="bg-[#0288D1] w-14 h-14 flex justify-center items-center rounded-full"
+           @click="isShowShareDrawer=true">
+        <img class="w-6 h-6" src="@/assets/share.svg" alt="add"/>
+      </div>
+    </transition>
+    <div class="bg-[#0288D1] w-14 h-14 flex justify-center items-center rounded-full"
+         @click="showOtherOptions =!showOtherOptions">
+      <transition v-if="!showOtherOptions" name="rotate">
+        <img :class="['w-8','h-8']" src="@/assets/add-white.svg" alt="add"/>
+      </transition>
+      <transition v-else name="rotate">
+        <img :class="['w-7','h-7']" src="@/assets/close.svg" alt="close"/>
+      </transition>
+    </div>
+  </div>
+  <!--  <NFloatButton :right="20" :bottom="20" width="3.5rem" height="3.5rem" shape="circle" class="bg-[#0288D1]"-->
+  <!--                @click="toAdd()">-->
+  <!--    <img class="w-8 h-8" src="@/assets/add-white.svg" alt="add"/>-->
+  <!--  </NFloatButton>-->
 
   <n-drawer v-model:show="isShowPhoneOption" placement="bottom" :default-height="210">
     <n-drawer-content>
@@ -312,9 +358,103 @@ onMounted(async () => {
       </div>
     </n-drawer-content>
   </n-drawer>
+
+  <n-drawer v-model:show="isShowShareDrawer" placement="bottom" :default-height="140">
+    <n-drawer-content>
+      <div class="flex w-full space-x-5 items-center h-full pt-2">
+        <div class="h-full flex flex-col items-center" @click="toClipboard">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
+          </div>
+          <NText>
+            复制连接
+          </NText>
+        </div>
+
+        <div class="h-full flex flex-col items-center">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
+          </div>
+          <NText>
+            生成qr码
+          </NText>
+        </div>
+
+        <div class="h-full flex flex-col items-center">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
+          </div>
+          <NText>
+            分享微信
+          </NText>
+        </div>
+
+        <div class="h-full flex flex-col items-center">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
+          </div>
+          <NText>
+            分享line
+          </NText>
+        </div>
+      </div>
+    </n-drawer-content>
+  </n-drawer>
 </template>
 
 
 <style scoped>
 /* 这里不需要额外的CSS，因为已用Tailwind CSS完成 */
+.rotate-enter-active,
+.rotate-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.rotate-enter-from {
+  transform: rotate(0deg);
+}
+
+.rotate-enter-to {
+  transform: rotate(45deg);
+}
+
+.rotate-leave-from {
+  transform: rotate(45deg);
+}
+
+.rotate-leave-to {
+  transform: rotate(0deg);
+}
+
+.fade {
+  transition: all 0.5s ease;
+  opacity: 0;
+  transform: translateY(20px); /* 初始向下位移 */
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px); /* 进入时的初始状态 */
+}
+
+.fade-enter-to {
+  opacity: 1;
+  transform: translateY(0); /* 进入后恢复到正常位置 */
+}
+
+.fade-leave-from {
+  opacity: 1;
+  transform: translateY(0); /* 离开时的初始状态 */
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px); /* 离开时向下位移 */
+}
+
 </style>

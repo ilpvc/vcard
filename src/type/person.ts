@@ -1,6 +1,7 @@
 export type Person = {
     header: string,
     address: string;
+    b_address: string;
     code: string;
     company: string;
     created_at: string; // 或 Date 类型，取决于实际需求

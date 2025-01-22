@@ -33,7 +33,8 @@ export default {
             email: '电子邮件',
             company: '公司',
             job: '职位',
-            address: '地址',
+            ha: '总部地址',
+            ba: '分部地址',
             addressDesc: '请输入您的地址',
             website: '网址',
             summary: '个人简介',
@@ -56,6 +57,9 @@ export default {
             xiajia: '芜湖市弋江区春洲路与夏家湖路交叉路口',
             beishong: '上海市松江区车墩镇北松公路5355弄23号',
             chonburi: '700/7,700/8,700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110'
+        },
+        company: {
+            huitong: '汇通新材料股份有限公司'
         }
     }
 }

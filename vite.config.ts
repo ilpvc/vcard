@@ -9,14 +9,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      "@assets": path.resolve(__dirname, './src/assets'),
-      "@components": path.resolve(__dirname, './src/components'),
-      "@views": path.resolve(__dirname, './src/views'),
-      "@utils": path.resolve(__dirname, './src/utils'),
     }
   },
   build: {
     sourcemap: false, // 禁用 Source Map
+    target: 'es2015',
   },
   server: {
     // 服务器监听的端口

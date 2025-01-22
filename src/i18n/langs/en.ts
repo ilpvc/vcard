@@ -33,7 +33,8 @@ export default {
             email: 'Email',
             company: 'Company',
             job: 'Your Job',
-            address: 'Address',
+            ha: 'Headquarters Address',
+            ba: 'Branch Address',
             addressDesc: 'Enter your Address',
             website: 'Website',
             summary: 'Summary',
@@ -56,6 +57,9 @@ export default {
             xiajia: 'Intersection of Chunzhou Road and Xiajiahu Road, Yijiang District, Wuhu City, Anhui Province, China',
             beishong: 'No. 23, Lane 5355, Beisong Highway, Chedu Town, Songjiang District, Shanghai, China',
             chonburi: '700/7, 700/8, 700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110, Thailand'
+        },
+        company: {
+            huitong: 'Orinko Advanced Plastics Co..Ltd'
         }
     }
 };

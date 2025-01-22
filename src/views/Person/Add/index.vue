@@ -15,7 +15,7 @@ import {
 import {useRouter} from "vue-router";
 import {ref, unref} from "vue"
 import {addPerson} from "@/api/person";
-import {fileToBase64} from "@utils/image";
+import {fileToBase64} from "@/utils/image";
 import type {Person} from "@/type/person";
 import {useI18n} from "vue-i18n";
 
@@ -26,7 +26,7 @@ const submitData = ref<Omit<Person, 'id'>>({
   header: "",
   address: "",
   code: "",
-  company: "",
+  company: t('addPerson.company.huitong'),
   created_at: "",
   email: "",
   first_name: "",
@@ -36,7 +36,8 @@ const submitData = ref<Omit<Person, 'id'>>({
   social_media: "",
   summary: "",
   telephone: "",
-  website: ""
+  website: "",
+  b_address: ''
 })
 
 const social = ref({
@@ -70,6 +71,21 @@ const addressOptions = ref([
   {label: t('addPerson.address.chonburi'), value: 'chonburi'},
 ]);
 
+const regionOptions = ref([
+  {label: '+86', value: '+86'},
+  {label: '+06', value: '+06'},
+  {label: '+01', value: '+01'},
+])
+
+const regionSubmit = ref({
+  mobile: '+86',
+  telephone: '+86'
+})
+
+const companyOptions = ref([
+  {label: t('addPerson.company.huitong'), value: 'huitong'},
+])
+
 
 async function uploadImage({
                              file
@@ -81,6 +97,10 @@ async function uploadImage({
 async function submit() {
   console.log(submitData.value)
   submitData.value.social_media = JSON.stringify(social.value)
+  if (submitData.value.mobile)
+    submitData.value.mobile = regionSubmit.value.mobile + submitData.value.mobile
+  if (submitData.value.telephone)
+    submitData.value.telephone = regionSubmit.value.telephone + submitData.value.telephone
   const res = await addPerson(submitData.value)
   console.log(res)
   await router.push({path: `/${res.code}`, replace: true})
@@ -112,21 +132,22 @@ function toHome() {
           <div class="font-bold">
             {{ $t('addPerson.info.img') }}
           </div>
-          <n-avatar
-              class="self-center"
-              round
-              :size="100"
-              object-fit="cover"
-              :src="submitData.header"
-          />
+
           <n-upload
               class="w-full flex justify-center"
               :custom-request="uploadImage"
               accept="image/*"
               :show-file-list="false">
-            <n-button class="w-80" size="medium" type="info">
-              {{ $t('addPerson.info.upload') }}
-            </n-button>
+            <n-avatar
+                class="self-center"
+                round
+                :size="100"
+                object-fit="cover"
+                :src="submitData.header"
+            />
+            <!--            <n-button class="w-80" size="medium" type="info">-->
+            <!--              {{ $t('addPerson.info.upload') }}-->
+            <!--            </n-button>-->
           </n-upload>
 
         </div>
@@ -141,10 +162,20 @@ function toHome() {
             <n-input size="large" v-model:value="submitData.last_name" :placeholder="$t('addPerson.info.lastName')"/>
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.number')">
-            <n-input size="large" v-model:value="submitData.mobile" :placeholder="$t('addPerson.info.mobile')"/>
+            <NInputGroup class="flex w-full">
+              <NSelect class="flex-[1]" size="large" :options="regionOptions" v-model:value="regionSubmit.mobile"
+                       placeholder=""></NSelect>
+              <n-input class="flex-[4]" size="large" v-model:value="submitData.mobile"
+                       :placeholder="$t('addPerson.info.mobile')"/>
+            </NInputGroup>
           </n-form-item>
           <n-form-item label-placement="left">
-            <n-input size="large" v-model:value="submitData.telephone" :placeholder="$t('addPerson.info.telephone')"/>
+            <NInputGroup class="flex w-full">
+              <NSelect class="flex-[1]" size="large" v-model:value="regionSubmit.telephone" :options="regionOptions"
+                       placeholder=""></NSelect>
+              <n-input class="flex-[4]" size="large" v-model:value="submitData.telephone"
+                       :placeholder="$t('addPerson.info.telephone')"/>
+            </NInputGroup>
           </n-form-item>
           <!--          <n-form-item label-placement="left">-->
           <!--            <n-input size="large" placeholder="Fax"/>-->
@@ -153,17 +184,22 @@ function toHome() {
             <n-input size="large" v-model:value="submitData.email" placeholder="your@email.com"/>
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.company')">
-            <n-input size="large" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')"/>
+            <NSelect size="large" :options="companyOptions" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')" ></NSelect>
+<!--            <n-input size="large" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')"/>-->
           </n-form-item>
           <n-form-item label-placement="left">
             <n-input size="large" v-model:value="submitData.job" :placeholder="$t('addPerson.info.job')"/>
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.address')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.ha')">
             <n-select size="large" :options="addressOptions" v-model:value="submitData.address"
                       :placeholder="$t('addPerson.info.address')"/>
             <!--            <n-input size="large" v-model:value="submitData.address" :placeholder="$t('addPerson.address.changning')"/>-->
           </n-form-item>
-
+          <n-form-item label-placement="top" :label="$t('addPerson.info.ba')">
+            <n-select size="large" :options="addressOptions" v-model:value="submitData.b_address"
+                      :placeholder="$t('addPerson.info.address')"/>
+            <!--            <n-input size="large" v-model:value="submitData.address" :placeholder="$t('addPerson.address.changning')"/>-->
+          </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.website')">
             <n-input size="large" v-model:value="submitData.website" placeholder="www.your-website.com"/>
           </n-form-item>
