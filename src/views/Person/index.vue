@@ -115,6 +115,11 @@ END:VCARD
 }
 
 function callPhone() {
+  if (personData.value.mobile.includes('+')){
+    const mobile = personData.value.mobile.split(" ")[1]
+    console.log(mobile)
+    window.location.href = `tel:${mobile}`
+  }
   window.location.href = `tel:${personData.value.mobile}`
 }
 
@@ -249,7 +254,22 @@ onMounted(async () => {
         </div>
         <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
           <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>
-          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>
+<!--          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>-->
+          <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
+              $t('person.info.show')
+            }}
+          </div>
+        </div>
+      </div>
+
+      <!--   地址   -->
+      <div v-if="personData.b_address" class="flex space-x-6 items-center pt-5">
+        <div class="self-start">
+          <img class="w-8 h-8" src="@/assets/location-gray.svg" alt="email"/>
+        </div>
+        <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
+<!--          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>-->
+          <div>{{$t('addPerson.info.ba')+': '+addressMap[personData.b_address] }}</div>
           <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
               $t('person.info.show')
             }}
