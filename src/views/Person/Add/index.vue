@@ -98,9 +98,9 @@ async function submit() {
   console.log(submitData.value)
   submitData.value.social_media = JSON.stringify(social.value)
   if (submitData.value.mobile)
-    submitData.value.mobile = regionSubmit.value.mobile + submitData.value.mobile
+    submitData.value.mobile = regionSubmit.value.mobile +' '+ submitData.value.mobile
   if (submitData.value.telephone)
-    submitData.value.telephone = regionSubmit.value.telephone + submitData.value.telephone
+    submitData.value.telephone = regionSubmit.value.telephone +' '+ submitData.value.telephone
   const res = await addPerson(submitData.value)
   console.log(res)
   await router.push({path: `/${res.code}`, replace: true})

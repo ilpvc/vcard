@@ -249,7 +249,7 @@ onMounted(async () => {
         </div>
         <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
           <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>
-          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>
+          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>
           <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
               $t('person.info.show')
             }}
