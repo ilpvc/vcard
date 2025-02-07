@@ -16,6 +16,11 @@ export default {
             call: 'โทร',
             cancel: 'ยกเลิก',
             summary: 'สรุป'
+        },
+        map: {
+            google: 'GoogleMaps',
+            gaode: 'Amap',
+            baidu: 'BaiDuMap',
         }
     },
     addPerson: {
@@ -34,7 +39,7 @@ export default {
             company: 'บริษัท',
             job: 'ตำแหน่งงานของคุณ',
             ha: 'ที่อยู่สำนักงานใหญ่',
-            ba: 'ที่อยู่สาขา',
+            ba: 'ที่อยู่ของ บริษัท',
             addressDesc: 'กรอกที่อยู่ของคุณ',
             website: 'เว็บไซต์',
             summary: 'ข้อมูลเพิ่มเติม',
@@ -57,6 +62,9 @@ export default {
             xiajia: 'Intersection of Chunzhou Road and Xiajiahu Road, Yijiang District, Wuhu City, Anhui Province, China',
             beishong: 'No. 23, Lane 5355, Beisong Highway, Chedu Town, Songjiang District, Shanghai, China',
             chonburi: '700/7, 700/8, 700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110, Thailand'
+        },
+        company: {
+            huitong: 'Orinko Advanced Plastics Co..Ltd'
         }
     }
 };

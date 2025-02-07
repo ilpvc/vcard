@@ -1,15 +1,19 @@
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
-import {NAvatar, NButton, NDrawer, NDrawerContent, NFloatButton, useMessage} from "naive-ui";
+import {computed, onMounted, ref} from "vue";
+import {NAvatar, NButton, NDrawer, NDrawerContent, NTooltip, useMessage} from "naive-ui";
 import {useRoute, useRouter} from "vue-router";
 import {getPersonByCode} from "@/api/person";
 import {useI18n} from 'vue-i18n';
 import {Person, Social} from "@/type/person";
+import {useAppStore} from '@/store/app'
 
+const appStore = useAppStore();
 const message = useMessage();
 const {locale, t} = useI18n();
 const isShowPhoneOption = ref(false)
 const isShowShareDrawer = ref(false)
+const isShowMapDrawer = ref(false)
+const currentAddress = ref('')
 const router = useRouter()
 const route = useRoute()
 const addressMap = ref({
@@ -33,7 +37,7 @@ const personData = ref<Person>({
   id: 0,
   header: "",
   address: "",
-  b_address:'',
+  b_address: '',
   code: "",
   company: "",
   created_at: "",
@@ -72,6 +76,7 @@ function showPhoneOption() {
 function changeLanguage(lang: string) {
   locale.value = lang
   isShowLangOption.value = false
+  appStore.setLanguage(lang)
   addressMap.value = {
     changning: t('addPerson.address.changning'),
     luhua: t('addPerson.address.luhua'),
@@ -115,7 +120,7 @@ END:VCARD
 }
 
 function callPhone() {
-  if (personData.value.mobile.includes('+')){
+  if (personData.value.mobile.includes('+')) {
     const mobile = personData.value.mobile.split(" ")[1]
     console.log(mobile)
     window.location.href = `tel:${mobile}`
@@ -127,16 +132,57 @@ function email() {
   window.location.href = `mailto:${personData.value.email}`;
 }
 
-function directions() {
-  window.open(`https://www.google.com/maps?q=${addressMap.value[personData.value.address]}`, "_blank");
+function directions(channel: string) {
+  const google = 'https://www.google.com/maps?q='
+  const gaode = 'https://www.amap.com/search?query=';
+  const baidu = 'https://map.baidu.com/search/'
+  let channelUrl = ''
+  if (channel === 'baidu') {
+    message.warning('暂未开放')
+    return;
+  }
+  switch (channel) {
+    case 'google':
+      channelUrl = google
+      break;
+    case 'gaode':
+      channelUrl = gaode
+      break;
+    case 'baidu':
+      channelUrl = baidu
+      break;
+    default:
+      channelUrl = google;
+      break;
+  }
+  window.open(`${channelUrl}${currentAddress.value}`, "_blank");
+  return;
 }
 
+const isZH = computed(() => {
+  return appStore.getLanguage() === "zh";
+})
+const isEN = computed(() => {
+  return appStore.getLanguage() === "en";
+})
+const isTH = computed(() => {
+  return appStore.getLanguage() === "th";
+})
+
 // 跳转到社交媒体
-function toSocial(s: string) {
+async function toSocial(s: string) {
   if (s === 'weixin') {
-    console.log('展示二维码');
-    return
+    if (await navigator.clipboard) {
+      await navigator.clipboard.writeText(social.value.weixin.value)
+      message.success('链接已复制到剪切板!')
+      // 可选：打开微信客户端（但无法直接跳转到搜索页面）
+      window.location.href = 'weixin://';
+    } else {
+      message.error('复制失败，请手动复制')
+    }
+    return;
   }
+
   if (s === 'line') {
     window.open(`https://line.me/R/ti/p/~${social.value.line.value}`, "_blank");
     return;
@@ -153,6 +199,12 @@ async function toClipboard() {
 
   await navigator.clipboard.writeText(url)
   message.success('链接已复制到剪切板!')
+}
+
+function openMapDrawer(address?: string) {
+  isShowMapDrawer.value = true;
+  if (address) currentAddress.value = address;
+  else currentAddress.value = '';
 }
 
 onMounted(async () => {
@@ -191,7 +243,7 @@ onMounted(async () => {
           <img class="h-8 w-8 text-white" src="@/assets/send.svg" alt="send"/>
           <span class="text-[10px]">{{ $t('person.nav.email') }}</span>
         </div>
-        <div @click="directions"
+        <div @click="openMapDrawer()"
              class="text-white py-2 px-4 w-[100px] transition-all flex flex-col items-center border-r border-[#2297D7]">
           <img class="h-8 w-8 text-white" src="@/assets/localtion.svg" alt="localtion"/>
           <span class="text-[10px]">{{ $t('person.nav.directions') }}</span>
@@ -246,6 +298,22 @@ onMounted(async () => {
         </div>
       </div>
 
+      <!--   公司地址   -->
+      <div v-if="personData.b_address" class="flex space-x-6 items-center pt-5">
+        <div class="self-start">
+          <img class="w-8 h-8" src="@/assets/company.svg" alt="email"/>
+        </div>
+        <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
+          <!--          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>-->
+          <div>{{ $t('addPerson.info.ba') + ': ' + addressMap[personData.b_address] }}</div>
+          <div class="text-[#77B5F6] text-md h-12 flex items-center"
+               @click="openMapDrawer(addressMap[personData.b_address])">{{
+              //directions(personData.b_address)
+              $t('person.info.show')
+            }}
+          </div>
+        </div>
+      </div>
 
       <!--   地址   -->
       <div v-if="personData.address" class="flex space-x-6 items-center pt-5">
@@ -253,30 +321,15 @@ onMounted(async () => {
           <img class="w-8 h-8" src="@/assets/location-gray.svg" alt="email"/>
         </div>
         <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
-          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>
-<!--          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>-->
-          <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
+          <div>{{ $t('addPerson.info.ha') + ': ' + addressMap[personData.address] }}</div>
+          <!--          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>-->
+          <div class="text-[#77B5F6] text-md h-12 flex items-center"
+               @click="openMapDrawer(addressMap[personData.address])">{{
               $t('person.info.show')
             }}
           </div>
         </div>
       </div>
-
-      <!--   地址   -->
-      <div v-if="personData.b_address" class="flex space-x-6 items-center pt-5">
-        <div class="self-start">
-          <img class="w-8 h-8" src="@/assets/location-gray.svg" alt="email"/>
-        </div>
-        <div class="flex flex-col w-full border-b border-[#EDEDED] pb-5">
-<!--          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>-->
-          <div>{{$t('addPerson.info.ba')+': '+addressMap[personData.b_address] }}</div>
-          <div class="text-[#77B5F6] text-md h-12 flex items-center" @click="directions">{{
-              $t('person.info.show')
-            }}
-          </div>
-        </div>
-      </div>
-
 
       <!--   网址   -->
       <div v-if="personData.website" class="flex space-x-6 items-center pt-5" @click="openWebsite">
@@ -307,8 +360,19 @@ onMounted(async () => {
         <div class="flex flex-col w-full">
           <div class="text-md mb-2">Social Media</div>
           <div class="flex flex-wrap justify-start items-center">
-            <img v-if="social.weixin.status" class="w-8 h-8 m-2" src="@/assets/social-icon/weixin-green.svg"
-                 alt="social" @click="toSocial('weixin')"/>
+            <NTooltip
+                placement="right"
+                trigger="hover"
+                :show-arrow="false"
+            >
+              <template #trigger>
+                <img v-if="social.weixin.status" class="w-8 h-8 m-2" src="@/assets/social-icon/weixin-green.svg"
+                     alt="social" @click="toSocial('weixin')"/>
+              </template>
+              <span> {{social.weixin.value}}</span>
+            </NTooltip>
+
+            <!--            <NInput type="text" class="flex-1 h-8" :default-value="social.weixin.value"/>-->
             <img v-if="social.line.status" class="w-8 h-8 m-2" src="@/assets/social-icon/line-green.svg" alt="social"
                  @click="toSocial('line')"/>
             <img v-if="social.whatsapp.status" class="w-8 h-8 m-2" src="@/assets/social-icon/whatsapp-green.svg"
@@ -362,23 +426,27 @@ onMounted(async () => {
       </div>
     </n-drawer-content>
   </n-drawer>
-  <n-drawer v-model:show="isShowLangOption" placement="bottom" :default-height="210">
+  <!-- 语言选择弹窗 -->
+  <n-drawer :auto-focus="false" v-model:show="isShowLangOption" placement="bottom" :default-height="210">
     <n-drawer-content>
       <div class="flex flex-col w-full space-y-3">
-        <n-button quaternary class="w-full text-lg h-12 m-0" type="info" @click="changeLanguage('en')">
+        <n-button v-bind="{quaternary: !isEN}" class="w-full text-lg h-12 m-0" type="info"
+                  @click="changeLanguage('en')">
           English
         </n-button>
-        <n-button quaternary class="w-full text-lg h-12 m-0" type="info" @click="changeLanguage('zh')">
+        <n-button v-bind="{quaternary: !isZH}" class="w-full text-lg h-12 m-0" type="info"
+                  @click="changeLanguage('zh')">
           简体中文
         </n-button>
-        <n-button quaternary class="w-full text-lg h-12 m-0" type="info" @click="changeLanguage('th')">
+        <n-button v-bind="{quaternary: !isTH}" class="w-full text-lg h-12 m-0" type="info"
+                  @click="changeLanguage('th')">
           ภาษาอังกฤษ
         </n-button>
 
       </div>
     </n-drawer-content>
   </n-drawer>
-
+  <!-- 分享弹窗 -->
   <n-drawer v-model:show="isShowShareDrawer" placement="bottom" :default-height="140">
     <n-drawer-content>
       <div class="flex w-full space-x-5 items-center h-full pt-2">
@@ -415,6 +483,39 @@ onMounted(async () => {
           </div>
           <NText>
             分享line
+          </NText>
+        </div>
+      </div>
+    </n-drawer-content>
+  </n-drawer>
+  <!-- 地图软件选择弹窗 -->
+  <n-drawer v-model:show="isShowMapDrawer" placement="bottom" :default-height="140">
+    <n-drawer-content>
+      <div class="flex w-full space-x-10 items-center h-full pt-2">
+        <div class="h-full flex flex-col items-center" @click="directions('google')">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-12 h-12" src="@/assets/map/google-map.svg" alt="add"/>
+          </div>
+          <NText>
+            {{ $t('person.map.google') }}
+          </NText>
+        </div>
+
+        <div class="h-full flex flex-col items-center" @click="directions('gaode')">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-12 h-12" src="@/assets/map/gaode-map.svg" alt="add"/>
+          </div>
+          <NText>
+            {{ $t('person.map.gaode') }}
+          </NText>
+        </div>
+
+        <div class="h-full flex flex-col items-center" @click="directions('baidu')">
+          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
+            <img class="w-12 h-12" src="@/assets/map/baidu-map.svg" alt="add"/>
+          </div>
+          <NText>
+            {{ $t('person.map.baidu') }}
           </NText>
         </div>
       </div>

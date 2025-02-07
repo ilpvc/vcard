@@ -26,7 +26,7 @@ const submitData = ref<Omit<Person, 'id'>>({
   header: "",
   address: "",
   code: "",
-  company: t('addPerson.company.huitong'),
+  company: 'huitong',
   created_at: "",
   email: "",
   first_name: "",
@@ -163,17 +163,17 @@ function toHome() {
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.number')">
             <NInputGroup class="flex w-full">
-              <NSelect class="flex-[1]" size="large" :options="regionOptions" v-model:value="regionSubmit.mobile"
+              <NSelect class="flex-[2]" size="large" :options="regionOptions" v-model:value="regionSubmit.mobile"
                        placeholder=""></NSelect>
-              <n-input class="flex-[4]" size="large" v-model:value="submitData.mobile"
+              <n-input class="flex-[7]" size="large" v-model:value="submitData.mobile"
                        :placeholder="$t('addPerson.info.mobile')"/>
             </NInputGroup>
           </n-form-item>
           <n-form-item label-placement="left">
             <NInputGroup class="flex w-full">
-              <NSelect class="flex-[1]" size="large" v-model:value="regionSubmit.telephone" :options="regionOptions"
+              <NSelect class="flex-[2]" size="large" v-model:value="regionSubmit.telephone" :options="regionOptions"
                        placeholder=""></NSelect>
-              <n-input class="flex-[4]" size="large" v-model:value="submitData.telephone"
+              <n-input class="flex-[7]" size="large" v-model:value="submitData.telephone"
                        :placeholder="$t('addPerson.info.telephone')"/>
             </NInputGroup>
           </n-form-item>

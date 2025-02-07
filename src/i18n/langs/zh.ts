@@ -16,6 +16,11 @@ export default {
             call: '拨号',
             cancel: '取消',
             summary: '简介'
+        },
+        map: {
+            google: '谷歌导航',
+            gaode: '高德导航',
+            baidu: '百度导航',
         }
     },
     addPerson: {
@@ -34,7 +39,7 @@ export default {
             company: '公司',
             job: '职位',
             ha: '总部地址',
-            ba: '分部地址',
+            ba: '公司地址',
             addressDesc: '请输入您的地址',
             website: '网址',
             summary: '个人简介',
@@ -59,7 +64,7 @@ export default {
             chonburi: '700/7,700/8,700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110'
         },
         company: {
-            huitong: '汇通新材料股份有限公司'
-        }
+            huitong: '会通新材料股份有限公司'
+        },
     }
 }

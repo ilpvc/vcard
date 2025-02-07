@@ -16,6 +16,11 @@ export default {
             call: 'Call',
             cancel: 'Cancel',
             summary: 'Summary',
+        },
+        map: {
+            google: 'GoogleMaps',
+            gaode: 'Amap',
+            baidu: 'BaiDuMap',
         }
     },
     addPerson: {
@@ -34,7 +39,7 @@ export default {
             company: 'Company',
             job: 'Your Job',
             ha: 'Headquarters Address',
-            ba: 'Branch Address',
+            ba: 'Company address',
             addressDesc: 'Enter your Address',
             website: 'Website',
             summary: 'Summary',
