@@ -69,6 +69,9 @@ const addressOptions = ref([
   {label: t('addPerson.address.xiajia'), value: 'xiajia'},
   {label: t('addPerson.address.beishong'), value: 'beishong'},
   {label: t('addPerson.address.chonburi'), value: 'chonburi'},
+  {label: t('addPerson.address.ThailandPlant'), value: 'ThailandPlant'},
+  {label: t('addPerson.address.JapanOffice'), value: 'JapanOffice'},
+  {label: t('addPerson.address.VietnamOffice'), value: 'VietnamOffice'},
 ]);
 
 const regionOptions = ref([

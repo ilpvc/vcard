@@ -61,7 +61,10 @@ export default {
             jiaocha: '安庆市高新区环湖西路与勇进路交叉口东',
             xiajia: '芜湖市弋江区春洲路与夏家湖路交叉路口',
             beishong: '上海市松江区车墩镇北松公路5355弄23号',
-            chonburi: '700/7,700/8,700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110'
+            chonburi: '700/7,700/8,700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110',
+            ThailandPlant: '泰国春武里府是拉差县坎松区品通工业园',
+            JapanOffice: '东京都港区港南2丁目16-5 NBF品川塔5-6楼工作空间',
+            VietnamOffice: '平阳省顺安市安福坊绿洲一别墅区'
         },
         company: {
             huitong: '会通新材料股份有限公司'

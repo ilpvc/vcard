@@ -61,7 +61,10 @@ export default {
             jiaocha: 'East of the intersection of Huanhu West Road and Yongjin Road, High-tech Zone, Anqing City, Anhui Province, China',
             xiajia: 'Intersection of Chunzhou Road and Xiajiahu Road, Yijiang District, Wuhu City, Anhui Province, China',
             beishong: 'No. 23, Lane 5355, Beisong Highway, Chedu Town, Songjiang District, Shanghai, China',
-            chonburi: '700/7, 700/8, 700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110, Thailand'
+            chonburi: '700/7, 700/8, 700/9 Moo.7 Khaokansong Sub-District, Sriracha District, Chonburi Province 20110, Thailand',
+            ThailandPlant: '700/7, 700/8, 700/9 เขตตำบลเขากันทรง อำเภอศรีราชา จังหวัดชลบุรี 20110',
+            JapanOffice: 'พื้นที่ทำงาน ชั้น ๕-๖ อาคาร NBF ชินางาวะ ทาวเวอร์ เลขที่ 16-5 เขตมินาโตะ โกนัน 2 โจเมะ กรุงโตเกียว',
+            VietnamOffice: 'เขตวิลล่า กรีนโอเอซิส 1 แขวงอันฝู เมืองซุ่นอัน มณฑลผิงหยาง'
         },
         company: {
             huitong: 'Orinko Advanced Plastics Co..Ltd'

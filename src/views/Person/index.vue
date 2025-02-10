@@ -8,6 +8,7 @@ import {Person, Social} from "@/type/person";
 import {useAppStore} from '@/store/app'
 import {getCurrentUrl} from "@/utils/app";
 import html2canvas from 'html2canvas'
+import { gaodeAddressUrl,googleAddressUrl} from "@/views/Person/data";
 
 const appStore = useAppStore();
 const message = useMessage();
@@ -30,6 +31,9 @@ const addressMap = ref({
   xiajia: t('addPerson.address.xiajia'),
   beishong: t('addPerson.address.beishong'),
   chonburi: t('addPerson.address.chonburi'),
+  ThailandPlant: t('addPerson.address.ThailandPlant'),
+  JapanOffice: t('addPerson.address.JapanOffice'),
+  VietnamOffice: t('addPerson.address.VietnamOffice'),
 });
 
 const showOtherOptions = ref(false);
@@ -91,6 +95,9 @@ function changeLanguage(lang: string) {
     xiajia: t('addPerson.address.xiajia'),
     beishong: t('addPerson.address.beishong'),
     chonburi: t('addPerson.address.chonburi'),
+    ThailandPlant: t('addPerson.address.ThailandPlant'),
+    JapanOffice: t('addPerson.address.JapanOffice'),
+    VietnamOffice: t('addPerson.address.VietnamOffice'),
   };
   companyMap.value = {
     huitong: t('addPerson.company.huitong'),
@@ -136,30 +143,20 @@ function email() {
 }
 
 function directions(channel: string) {
-  const google = 'https://www.google.com/maps?q='
-  const gaode = 'https://www.amap.com/search?query=';
-  const baidu = 'https://map.baidu.com/search/'
-  let channelUrl = ''
   if (channel === 'baidu') {
     message.warning('暂未开放')
     return;
   }
-  switch (channel) {
-    case 'google':
-      channelUrl = google
-      break;
-    case 'gaode':
-      channelUrl = gaode
-      break;
-    case 'baidu':
-      channelUrl = baidu
-      break;
-    default:
-      channelUrl = google;
-      break;
+  if (channel === 'gaode') {
+    const url = gaodeAddressUrl[currentAddress.value]
+    window.open(url, "_blank");
+    return;
   }
-  window.open(`${channelUrl}${currentAddress.value}`, "_blank");
-  return;
+  if (channel === 'google') {
+    const url = googleAddressUrl[currentAddress.value]
+    window.open(url, "_blank");
+    return;
+  }
 }
 
 const isZH = computed(() => {
@@ -170,6 +167,12 @@ const isEN = computed(() => {
 })
 const isTH = computed(() => {
   return appStore.getLanguage() === "th";
+})
+const isJA = computed(() => {
+  return appStore.getLanguage() === "ja";
+})
+const isVI = computed(() => {
+  return appStore.getLanguage() === "vi";
 })
 
 // 跳转到社交媒体
@@ -330,7 +333,7 @@ onMounted(async () => {
           <!--          <div>{{$t('addPerson.info.ha')+': '+addressMap[personData.address] }}</div>-->
           <div>{{ $t('addPerson.info.ba') + ': ' + addressMap[personData.b_address] }}</div>
           <div class="text-[#77B5F6] text-md h-12 flex items-center"
-               @click="openMapDrawer(addressMap[personData.b_address])">{{
+               @click="openMapDrawer(personData.b_address)">{{
               //directions(personData.b_address)
               $t('person.info.show')
             }}
@@ -347,7 +350,7 @@ onMounted(async () => {
           <div>{{ $t('addPerson.info.ha') + ': ' + addressMap[personData.address] }}</div>
           <!--          <div v-if="personData.b_address">{{$t('addPerson.info.ha')+': '+addressMap[personData.b_address] }}</div>-->
           <div class="text-[#77B5F6] text-md h-12 flex items-center"
-               @click="openMapDrawer(addressMap[personData.address])">{{
+               @click="openMapDrawer(personData.address)">{{
               $t('person.info.show')
             }}
           </div>
@@ -464,6 +467,14 @@ onMounted(async () => {
         <n-button v-bind="{quaternary: !isTH}" class="w-full text-lg h-12 m-0" type="info"
                   @click="changeLanguage('th')">
           ภาษาอังกฤษ
+        </n-button>
+        <n-button v-bind="{quaternary: !isJA}" class="w-full text-lg h-12 m-0" type="info"
+                  @click="changeLanguage('ja')">
+          にほんご
+        </n-button>
+        <n-button v-bind="{quaternary: !isVI}" class="w-full text-lg h-12 m-0" type="info"
+                  @click="changeLanguage('vi')">
+          Việt Nam
         </n-button>
 
       </div>
