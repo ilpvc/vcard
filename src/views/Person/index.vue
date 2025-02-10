@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
-import {NAvatar, NButton, NDrawer, NDrawerContent, NTooltip, useMessage} from "naive-ui";
+import {NAvatar, NButton, NDrawer, NDrawerContent, NTooltip, NModal, NCard, NQrCode, useMessage} from "naive-ui";
 import {useRoute, useRouter} from "vue-router";
 import {getPersonByCode} from "@/api/person";
 import {useI18n} from 'vue-i18n';
 import {Person, Social} from "@/type/person";
 import {useAppStore} from '@/store/app'
+import {getCurrentUrl} from "@/utils/app";
+import html2canvas from 'html2canvas'
 
 const appStore = useAppStore();
 const message = useMessage();
@@ -13,6 +15,7 @@ const {locale, t} = useI18n();
 const isShowPhoneOption = ref(false)
 const isShowShareDrawer = ref(false)
 const isShowMapDrawer = ref(false)
+const isShowQRCodeModel = ref(false)
 const currentAddress = ref('')
 const router = useRouter()
 const route = useRoute()
@@ -207,6 +210,26 @@ function openMapDrawer(address?: string) {
   else currentAddress.value = '';
 }
 
+// 生成QR码
+function createQRCode() {
+  console.log('createQRCode')
+  isShowQRCodeModel.value = true;
+  isShowShareDrawer.value = false;
+}
+
+//下载QR图
+function downloadQRCode() {
+  console.log('downloadQRCode')
+  const qr = document.getElementById('qr')
+  html2canvas(qr).then((canvas) => {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL(); // 转换为图片URL
+    link.download = 'popup-content.png'; // 设置下载文件名
+    link.click(); // 触发下载
+  });
+}
+
+
 onMounted(async () => {
   const code = route.params?.code
   personData.value = await getPersonByCode(code || 'ilpvc')
@@ -369,7 +392,7 @@ onMounted(async () => {
                 <img v-if="social.weixin.status" class="w-8 h-8 m-2" src="@/assets/social-icon/weixin-green.svg"
                      alt="social" @click="toSocial('weixin')"/>
               </template>
-              <span> {{social.weixin.value}}</span>
+              <span> {{ social.weixin.value }}</span>
             </NTooltip>
 
             <!--            <NInput type="text" class="flex-1 h-8" :default-value="social.weixin.value"/>-->
@@ -459,32 +482,32 @@ onMounted(async () => {
           </NText>
         </div>
 
-        <div class="h-full flex flex-col items-center">
+        <div class="h-full flex flex-col items-center" @click="createQRCode()">
           <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
-            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
+            <img class="w-8 h-8" src="@/assets/qrcode.svg" alt="add"/>
           </div>
           <NText>
             生成qr码
           </NText>
         </div>
 
-        <div class="h-full flex flex-col items-center">
-          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
-            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
-          </div>
-          <NText>
-            分享微信
-          </NText>
-        </div>
+<!--        <div class="h-full flex flex-col items-center">-->
+<!--          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">-->
+<!--            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>-->
+<!--          </div>-->
+<!--          <NText>-->
+<!--            分享微信-->
+<!--          </NText>-->
+<!--        </div>-->
 
-        <div class="h-full flex flex-col items-center">
-          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
-            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
-          </div>
-          <NText>
-            分享line
-          </NText>
-        </div>
+<!--        <div class="h-full flex flex-col items-center">-->
+<!--          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">-->
+<!--            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>-->
+<!--          </div>-->
+<!--          <NText>-->
+<!--            分享line-->
+<!--          </NText>-->
+<!--        </div>-->
       </div>
     </n-drawer-content>
   </n-drawer>
@@ -521,6 +544,31 @@ onMounted(async () => {
       </div>
     </n-drawer-content>
   </n-drawer>
+
+  <!--  QRCode模态框-->
+  <NModal v-model:show="isShowQRCodeModel">
+    <div class="flex flex-col space-y-4">
+      <div id="qr" class="flex flex-col w-auto justify-center items-center bg-white space-y-2 p-4 border rounded-lg">
+        <h2 class="text-2xl font-semibold mt-5">{{ personData.first_name + ' ' + personData.last_name }}</h2>
+        <p class="text-sm mt-2">{{ companyMap.huitong }}</p>
+        <p class="text-sm opacity-50 mt-2">{{ personData.job }}</p>
+
+        <NQrCode class="box-content"
+                 :value="getCurrentUrl()"
+                 :size="200"
+                 :icon-src="personData.header"
+                 :icon-size="60"
+                 :icon-border-radius="10"
+                 error-correction-level="H"
+                 color="#0288D1"/>
+      </div>
+      <div class="cursor-pointer items-center flex justify-center" @click="downloadQRCode()">
+        <div class="bg-white border rounded-full w-12 h-12 flex justify-center items-center">
+          <img class="h-8 w-8" src="@/assets/download.svg" alt="Phone"/>
+        </div>
+      </div>
+    </div>
+  </NModal>
 </template>
 
 

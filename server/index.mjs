@@ -22,18 +22,33 @@ const db = mysql.createConnection({
     database: 'v-card' // Replace with your MySQL database name
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-    }
-    console.log('Connected to MySQL database.');
-});
+function checkConnection() {
+    db.ping((err) => {
+        if (err) {
+            console.error('连接失效:', err);
+            connectDB()
+        } else {
+            console.log('连接成功');
+        }
+    });
+}
+function connectDB(){
+    db.connect(err => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return;
+        }
+        console.log('Connected to MySQL database.');
+    });
+}
+
+connectDB();
 
 // Step 5: Define CRUD routes for a table (e.g., "users")
 
 // Get all records
 app.get('/person/:code', (req, res) => {
+    checkConnection()
     const { code } = req.params;
     const query = `SELECT * FROM v_person where code = '${code}'`;
     db.query(query, (err, results) => {
@@ -62,6 +77,7 @@ app.get('/person/:code', (req, res) => {
 
 // Create a new record
 app.post('/person/add', (req, res) => {
+    checkConnection()
     console.log(req.body);
     const personData = req.body;
     const query = person.addPerson();
