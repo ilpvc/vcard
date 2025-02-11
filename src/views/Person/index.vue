@@ -269,7 +269,7 @@ onMounted(async () => {
           <img class="h-8 w-8 text-white" src="@/assets/send.svg" alt="send"/>
           <span class="text-[10px]">{{ $t('person.nav.email') }}</span>
         </div>
-        <div @click="openMapDrawer()"
+        <div @click="openMapDrawer(personData.b_address || personData.address )"
              class="text-white py-2 px-4 w-[100px] transition-all flex flex-col items-center border-r border-[#2297D7]">
           <img class="h-8 w-8 text-white" src="@/assets/localtion.svg" alt="localtion"/>
           <span class="text-[10px]">{{ $t('person.nav.directions') }}</span>
