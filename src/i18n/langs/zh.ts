@@ -69,5 +69,10 @@ export default {
         company: {
             huitong: '会通新材料股份有限公司'
         },
+        rules: {
+            first_name: '名必须填',
+            last_name: '姓必需填写',
+            email: '邮箱必须填写',
+        }
     }
 }

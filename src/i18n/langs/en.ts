@@ -68,6 +68,11 @@ export default {
         },
         company: {
             huitong: 'Orinko Advanced Plastics Co..Ltd'
+        },
+        rules: {
+            first_name: 'First name is required',
+            last_name: 'Last name is required',
+            email: 'email is required',
         }
     }
 };

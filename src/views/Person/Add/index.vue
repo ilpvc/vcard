@@ -10,17 +10,20 @@ import {
   NGridItem,
   NUpload,
   NSelect,
-  UploadCustomRequestOptions
+  useMessage,
+  UploadCustomRequestOptions, SelectOption, FormInst
 } from "naive-ui"
 import {useRouter} from "vue-router";
-import {ref, unref} from "vue"
+import {h, ref, unref} from "vue"
 import {addPerson} from "@/api/person";
 import {fileToBase64} from "@/utils/image";
 import type {Person} from "@/type/person";
 import {useI18n} from "vue-i18n";
+import {addPersonRules} from './rules'
 
 const router = useRouter();
 const {t} = useI18n();
+const message = useMessage();
 
 const submitData = ref<Omit<Person, 'id'>>({
   header: "",
@@ -78,6 +81,8 @@ const regionOptions = ref([
   {label: '+86', value: '+86'},
   {label: '+06', value: '+06'},
   {label: '+01', value: '+01'},
+  {label: '+84', value: '+84'},
+  {label: '+81', value: '+81'},
 ])
 
 const regionSubmit = ref({
@@ -97,16 +102,61 @@ async function uploadImage({
   submitData.value.header = await fileToBase64(f)
 }
 
+function renderLabel(option: SelectOption) {
+  const labelImgMap = new Map()
+  labelImgMap.set('+86', new URL(`@/assets/flag/china.svg`, import.meta.url))
+  labelImgMap.set('+06', new URL('@/assets/flag/Thailand.svg', import.meta.url))
+  labelImgMap.set('+01', new URL('@/assets/flag/America.svg', import.meta.url))
+  labelImgMap.set('+84', new URL('@/assets/flag/Vietnam.svg', import.meta.url))
+  labelImgMap.set('+81', new URL('@/assets/flag/japan.svg', import.meta.url))
+  const c = labelImgMap.get(option.label)
+  return [
+    h(
+        "div",
+        {
+          style: {
+            display: "flex",
+          },
+        },
+        [
+          h(
+              "img",
+              {
+                style: {
+                  width: "20px",
+                  height: "20px",
+                  marginRight: "8px"
+                },
+                src: c,
+              },
+              {}
+          ),
+          option.label as string
+        ]
+    ),
+
+  ]
+}
+
+const formRef = ref<FormInst | null>(null)
+
 async function submit() {
-  console.log(submitData.value)
-  submitData.value.social_media = JSON.stringify(social.value)
-  if (submitData.value.mobile)
-    submitData.value.mobile = regionSubmit.value.mobile +' '+ submitData.value.mobile
-  if (submitData.value.telephone)
-    submitData.value.telephone = regionSubmit.value.telephone +' '+ submitData.value.telephone
-  const res = await addPerson(submitData.value)
-  console.log(res)
-  await router.push({path: `/${res.code}`, replace: true})
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      submitData.value.social_media = JSON.stringify(social.value)
+      if (submitData.value.mobile)
+        submitData.value.mobile = regionSubmit.value.mobile + ' ' + submitData.value.mobile
+      if (submitData.value.telephone)
+        submitData.value.telephone = regionSubmit.value.telephone + ' ' + submitData.value.telephone
+      const res = await addPerson(submitData.value)
+      console.log(res)
+      message.success('保存成功')
+      await router.push({path: `/${res.code}`, replace: true})
+    } else {
+      console.log(errors)
+      message.error('请完善信息')
+    }
+  })
 }
 
 function openSocial(s) {
@@ -157,56 +207,59 @@ function toHome() {
         <n-divider/>
 
         <!--    填写表单-->
-        <n-form>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.name')">
+        <n-form ref="formRef" :model="submitData" :rules="addPersonRules">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.name')" path="first_name">
             <n-input size="large" v-model:value="submitData.first_name" :placeholder="$t('addPerson.info.firstName')"/>
           </n-form-item>
-          <n-form-item label-placement="left">
+          <n-form-item label-placement="left" path="last_name">
             <n-input size="large" v-model:value="submitData.last_name" :placeholder="$t('addPerson.info.lastName')"/>
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.number')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.number')" path="mobile">
             <NInputGroup class="flex w-full">
-              <NSelect class="flex-[2]" size="large" :options="regionOptions" v-model:value="regionSubmit.mobile"
+              <NSelect class="flex-[3]" size="large" :options="regionOptions" :render-label="renderLabel"
+                       v-model:value="regionSubmit.mobile"
                        placeholder=""></NSelect>
-              <n-input class="flex-[7]" size="large" v-model:value="submitData.mobile"
+              <n-input class="flex-[8]" size="large" v-model:value="submitData.mobile"
                        :placeholder="$t('addPerson.info.mobile')"/>
             </NInputGroup>
           </n-form-item>
-          <n-form-item label-placement="left">
+          <n-form-item label-placement="left" path="telephone">
             <NInputGroup class="flex w-full">
-              <NSelect class="flex-[2]" size="large" v-model:value="regionSubmit.telephone" :options="regionOptions"
+              <NSelect class="flex-[3]" size="large" v-model:value="regionSubmit.telephone" :options="regionOptions"
+                       :render-label="renderLabel"
                        placeholder=""></NSelect>
-              <n-input class="flex-[7]" size="large" v-model:value="submitData.telephone"
+              <n-input class="flex-[8]" size="large" v-model:value="submitData.telephone"
                        :placeholder="$t('addPerson.info.telephone')"/>
             </NInputGroup>
           </n-form-item>
           <!--          <n-form-item label-placement="left">-->
           <!--            <n-input size="large" placeholder="Fax"/>-->
           <!--          </n-form-item>-->
-          <n-form-item label-placement="top" :label="$t('addPerson.info.email')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.email')" path="email">
             <n-input size="large" v-model:value="submitData.email" placeholder="your@email.com"/>
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.company')">
-            <NSelect size="large" :options="companyOptions" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')" ></NSelect>
-<!--            <n-input size="large" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')"/>-->
+          <n-form-item label-placement="top" :label="$t('addPerson.info.company')" path="company">
+            <NSelect size="large" :options="companyOptions" v-model:value="submitData.company"
+                     :placeholder="$t('addPerson.info.company')"></NSelect>
+            <!--            <n-input size="large" v-model:value="submitData.company" :placeholder="$t('addPerson.info.company')"/>-->
           </n-form-item>
-          <n-form-item label-placement="left">
+          <n-form-item label-placement="left" path="job">
             <n-input size="large" v-model:value="submitData.job" :placeholder="$t('addPerson.info.job')"/>
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.ha')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.ha')" path="address">
             <n-select size="large" :options="addressOptions" v-model:value="submitData.address"
-                      :placeholder="$t('addPerson.info.address')"/>
+                      :placeholder="$t('addPerson.info.addressDesc')"/>
             <!--            <n-input size="large" v-model:value="submitData.address" :placeholder="$t('addPerson.address.changning')"/>-->
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.ba')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.ba')" path="b_address">
             <n-select size="large" :options="addressOptions" v-model:value="submitData.b_address"
-                      :placeholder="$t('addPerson.info.address')"/>
+                      :placeholder="$t('addPerson.info.addressDesc')"/>
             <!--            <n-input size="large" v-model:value="submitData.address" :placeholder="$t('addPerson.address.changning')"/>-->
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.website')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.website')" path="website">
             <n-input size="large" v-model:value="submitData.website" placeholder="www.your-website.com"/>
           </n-form-item>
-          <n-form-item label-placement="top" :label="$t('addPerson.info.summary')">
+          <n-form-item label-placement="top" :label="$t('addPerson.info.summary')" path="summary">
             <n-input type="textarea" v-model:value="submitData.summary" size="large"
                      :placeholder="$t('addPerson.info.input')"/>
           </n-form-item>
