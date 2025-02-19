@@ -21,6 +21,13 @@ export default {
             google: 'GoogleMaps',
             gaode: 'Amap',
             baidu: 'BaiDuMap',
+        },
+        social: {
+            title: "Social Media"
+        },
+        drawer: {
+            copy: "Copy Link",
+            qr: "Generate QR Code"
         }
     },
     addPerson: {
@@ -44,6 +51,8 @@ export default {
             website: 'Website',
             summary: 'Summary',
             input: 'Please input ',
+            employ_number: 'Employ Number',
+            employ_number_desc: 'Please input Employ Number',
         },
         social: {
             title: 'Social Media',

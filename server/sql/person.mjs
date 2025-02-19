@@ -8,6 +8,7 @@ const addPerson = () => {
         first_name,
         last_name,
         email,
+        employ_number,
         mobile,
         telephone,
         company,
@@ -18,7 +19,7 @@ const addPerson = () => {
         summary,
         social_media,
         code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
   // 返回 SQL
   return query;
@@ -34,6 +35,7 @@ const getParam = (person) => {
     person.first_name || '',       // first_name: 必填字段，默认为空字符串
     person.last_name || '',        // last_name
     person.email || '',            // email
+    person.employ_number || 0,     // employ_number
     person.mobile || '',           // mobile
     person.telephone || '',        // telephone
     person.company || '',          // company

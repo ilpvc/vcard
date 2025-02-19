@@ -21,6 +21,13 @@ export default {
             google: 'GoogleMaps',
             gaode: 'Amap',
             baidu: 'BaiDuMap',
+        },
+        social: {
+            title: "สื่อสังคม"
+        },
+        drawer: {
+            copy: "คัดลอกลิงก์",
+            qr: "สร้าง QR Code"
         }
     },
     addPerson: {
@@ -43,7 +50,9 @@ export default {
             addressDesc: 'กรอกที่อยู่ของคุณ',
             website: 'เว็บไซต์',
             summary: 'ข้อมูลเพิ่มเติม',
-            input: 'กรุณากรอก ',
+            input: 'กรุณากรอก',
+            employ_number: 'รหัส พน.',
+            employ_number_desc: 'กรุณากรอก รหัส พน.',
         },
         social: {
             title: 'สื่อสังคม',

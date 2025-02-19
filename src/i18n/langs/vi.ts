@@ -21,6 +21,13 @@ export default {
             google: 'GoogleMaps',
             gaode: 'Amap',
             baidu: 'BaiDuMap',
+        },
+        social: {
+            title: "Mạng xã hội"
+        },
+        drawer: {
+            copy: "Sao chép liên kết",
+            qr: "Tạo mã QR"
         }
     },
     addPerson: {
@@ -44,6 +51,8 @@ export default {
             website: 'Trang web',
             summary: 'Thông tin thêm',
             input: 'Vui lòng nhập',
+            employ_number: 'Mã NV',
+            employ_number_desc: 'Vui lòng nhập mã NV',
         },
         social: {
             title: 'Mạng xã hội',

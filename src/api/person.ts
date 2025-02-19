@@ -1,9 +1,9 @@
 import axios from '../utils/request'
 import type {Person} from '@/type/person'
 
-export async function getPersonByCode(code: string) {
+export async function getPersonByCode(code: string | string[]) {
     // return await axios.get(`/person?code=${code}`)
-    return await axios.get(`/person/${code}`)
+    return await axios.get<Person>(`/person/${code}`)
 }
 
 export async function addPerson(person:Omit<Person, 'id'>) {

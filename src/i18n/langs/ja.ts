@@ -21,6 +21,13 @@ export default {
             google: 'GoogleMaps',
             gaode: 'Amap',
             baidu: 'BaiDuMap',
+        },
+        social: {
+            title: "ソーシャルメディア"
+        },
+        drawer: {
+            copy: "リンクをコピー",
+            qr: "QRコードを生成"
         }
     },
     addPerson: {
@@ -44,6 +51,8 @@ export default {
             website: 'ウェブサイト',
             summary: '追加情報',
             input: '入力してください',
+            employ_number: '社員番号',
+            employ_number_desc: '社員番号を入力してください',
         },
         social: {
             title: 'ソーシャルメディア',

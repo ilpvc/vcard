@@ -10,6 +10,7 @@ import {
   NGridItem,
   NUpload,
   NSelect,
+  NInputGroup,
   useMessage,
   UploadCustomRequestOptions, SelectOption, FormInst
 } from "naive-ui"
@@ -32,6 +33,7 @@ const submitData = ref<Omit<Person, 'id'>>({
   company: 'huitong',
   created_at: "",
   email: "",
+  employ_number: null,
   first_name: "",
   last_name: "",
   job: "",
@@ -150,8 +152,13 @@ async function submit() {
         submitData.value.telephone = regionSubmit.value.telephone + ' ' + submitData.value.telephone
       const res = await addPerson(submitData.value)
       console.log(res)
-      message.success('保存成功')
-      await router.push({path: `/${res.code}`, replace: true})
+      if (res.code === 406){
+        message.error(res.message)
+      }else{
+        message.success('保存成功')
+        await router.push({path: `/${res.code}`, replace: true})
+      }
+
     } else {
       console.log(errors)
       message.error('请完善信息')
@@ -213,6 +220,9 @@ function toHome() {
           </n-form-item>
           <n-form-item label-placement="left" path="last_name">
             <n-input size="large" v-model:value="submitData.last_name" :placeholder="$t('addPerson.info.lastName')"/>
+          </n-form-item>
+          <n-form-item label-placement="top" :label="$t('addPerson.info.employ_number')" path="employ_number">
+            <n-input size="large" v-model:value="submitData.employ_number" :placeholder="$t('addPerson.info.employ_number_desc')"/>
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.number')" path="mobile">
             <NInputGroup class="flex w-full">

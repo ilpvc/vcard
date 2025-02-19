@@ -3,129 +3,127 @@ import express from 'express';
 import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import * as person from './sql/person.mjs'; // 修改为 .mjs 扩展名
+import * as person from './sql/person.mjs'; 
 
-// Step 2: Initialize express app
 const app = express();
 const port = 3000;
 
-// Step 3: Middleware setup
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
-// Step 4: Setup MySQL connection
-const db = mysql.createConnection({
+const dbConfig = {
     host: 'localhost',
     user: 'root',
     password: '123456', // Replace with your MySQL password
-    database: 'v-card' // Replace with your MySQL database name
-});
+    database: 'v-card', // Replace with your MySQL database name
+    waitForConnections: true, // Wait for available connection if the pool is full
+    connectionLimit: 10, // Maximum number of connections in the pool
+    queueLimit: 0 // Unlimited queue length for waiting connections
+};
 
-function checkConnection() {
-    db.ping((err) => {
+let pool;
+
+// 创建连接池
+function createPool() {
+    pool = mysql.createPool(dbConfig);
+
+    pool.on('acquire', (connection) => {
+        console.log('Connection %d acquired', connection.threadId);
+    });
+
+    pool.on('release', (connection) => {
+        console.log('Connection %d released', connection.threadId);
+    });
+
+    // 检查连接池中的连接是否健康
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error('连接失效:', err);
-            connectDB()
+            console.error('Error acquiring connection:', err);
+            setTimeout(createPool, 5000); // 连接失败时重试
         } else {
-            console.log('连接成功');
+            console.log('Pool connected, connection is live');
+            connection.release(); // 使用后释放连接
         }
     });
 }
-function connectDB(){
-    db.connect(err => {
+
+createPool();
+
+// 获取一个连接并执行查询
+function queryDatabase(query, params, callback) {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return;
+            console.error('Error getting connection from pool:', err);
+            return callback(err);
         }
-        console.log('Connected to MySQL database.');
+
+        connection.query(query, params, (queryErr, results) => {
+            connection.release(); // 查询完成后释放连接
+            if (queryErr) {
+                console.error('Error executing query:', queryErr);
+                return callback(queryErr);
+            }
+            callback(null, results);
+        });
     });
 }
 
-connectDB();
-
-// Step 5: Define CRUD routes for a table (e.g., "users")
+// Step 5: Define CRUD routes for a table (e.g., "person")
 
 // Get all records
 app.get('/person/:code', (req, res) => {
-    checkConnection()
     const { code } = req.params;
     const query = `SELECT * FROM v_person where code = '${code}'`;
-    db.query(query, (err, results) => {
+    queryDatabase(query, [], (err, results) => {
         if (err) {
-            console.error('Error fetching users:', err);
-            res.status(500).send('Error fetching users');
+            console.error('Error fetching person data:', err);
+            res.status(500).send('Error fetching data');
         } else {
             res.json(results[0] || {});
         }
     });
 });
 
-// // Get a single record by ID
-// app.get('/users/:id', (req, res) => {
-//     const { id } = req.params;
-//     const query = 'SELECT * FROM users WHERE id = ?';
-//     db.query(query, [id], (err, results) => {
-//         if (err) {
-//             console.error('Error fetching user:', err);
-//             res.status(500).send('Error fetching user');
-//         } else {
-//             res.json(results[0] || {});
-//         }
-//     });
-// });
-
 // Create a new record
 app.post('/person/add', (req, res) => {
-    checkConnection()
     console.log(req.body);
     const personData = req.body;
     const query = person.addPerson();
     const { params, code } = person.getParam(personData);
-    db.query(query, params, (err, result) => {
+    const userQuerySQL = `select * from v_user where user_id = ? and email = ?`;
+
+    queryDatabase(userQuerySQL, [personData.employ_number, personData.email], (err, results) => {
         if (err) {
-            console.error('Error creating user:', err);
-            res.status(500).send('Error creating user');
+            console.error('Error fetching users:', err);
+            res.status(500).send('Error fetching users');
         } else {
-            res.status(201).json({
-                id: result.insertId,
-                message: 'success',
-                code: code
-            });
+            const user = results[0];
+            if (user) {
+                queryDatabase(query, params, (err, result) => {
+                    if (err) {
+                        console.error('Error creating user:', err);
+                        res.status(500).send('Error creating user');
+                    } else {
+                        res.status(201).json({
+                            id: result.insertId,
+                            message: 'success',
+                            code: code
+                        });
+                    }
+                });
+            } else {
+                res.status(200).json({
+                    message: '非授权人员，无法创建',
+                    code: 406
+                });
+            }
         }
     });
 });
-
-// // Update a record by ID
-// app.put('/users/:id', (req, res) => {
-//     const { id } = req.params;
-//     const { name, email } = req.body;
-//     const query = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
-//     db.query(query, [name, email, id], (err, result) => {
-//         if (err) {
-//             console.error('Error updating user:', err);
-//             res.status(500).send('Error updating user');
-//         } else {
-//             res.send('User updated successfully');
-//         }
-//     });
-// });
-
-// // Delete a record by ID
-// app.delete('/users/:id', (req, res) => {
-//     const { id } = req.params;
-//     const query = 'DELETE FROM users WHERE id = ?';
-//     db.query(query, [id], (err, result) => {
-//         if (err) {
-//             console.error('Error deleting user:', err);
-//             res.status(500).send('Error deleting user');
-//         } else {
-//             res.send('User deleted successfully');
-//         }
-//     });
-// });
 
 // Step 6: Start the server
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+

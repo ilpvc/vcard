@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
-import {NAvatar, NButton, NDrawer, NDrawerContent, NTooltip, NModal, NCard, NQrCode, useMessage} from "naive-ui";
+import {NAvatar, NButton, NDrawer, NDrawerContent, NTooltip, NModal, NText, NQrCode, useMessage} from "naive-ui";
 import {useRoute, useRouter} from "vue-router";
 import {getPersonByCode} from "@/api/person";
 import {useI18n} from 'vue-i18n';
@@ -9,6 +9,8 @@ import {useAppStore} from '@/store/app'
 import {getCurrentUrl} from "@/utils/app";
 import html2canvas from 'html2canvas'
 import { gaodeAddressUrl,googleAddressUrl} from "@/views/Person/data";
+import logo from '@/assets/img/logo.jpg'
+
 
 const appStore = useAppStore();
 const message = useMessage();
@@ -49,6 +51,7 @@ const personData = ref<Person>({
   company: "",
   created_at: "",
   email: "",
+  employ_number: null,
   first_name: "",
   last_name: "",
   job: "",
@@ -234,8 +237,14 @@ function downloadQRCode() {
 
 
 onMounted(async () => {
-  const code = route.params?.code
-  personData.value = await getPersonByCode(code || 'ilpvc')
+  let code = route.params?.code
+  try {
+    const res = await getPersonByCode(code|| 'ilpvc')
+    console.log(res)
+    personData.value = {...res}
+  }catch (err){
+    console.log(err)
+  }
   social.value = JSON.parse(personData.value.social_media)
   console.log(personData.value)
 })
@@ -255,6 +264,7 @@ onMounted(async () => {
         />
         <h2 class="text-2xl font-semibold mt-5">{{ personData.first_name + ' ' + personData.last_name }}</h2>
         <p class="text-sm opacity-50 mt-2">{{ personData.job }}</p>
+        <p class="text-sm  mt-2">{{$t('addPerson.info.employ_number')+':'+ personData.employ_number }}</p>
       </div>
 
       <!-- 按钮区域 -->
@@ -384,15 +394,16 @@ onMounted(async () => {
           <div class="w-8 h-8"/>
         </div>
         <div class="flex flex-col w-full">
-          <div class="text-md mb-2">Social Media</div>
+          <div class="text-md mb-2">{{$t("person.social.title")}}</div>
           <div class="flex flex-wrap justify-start items-center">
             <NTooltip
                 placement="right"
                 trigger="hover"
                 :show-arrow="false"
+                v-if="social.weixin.status"
             >
               <template #trigger>
-                <img v-if="social.weixin.status" class="w-8 h-8 m-2" src="@/assets/social-icon/weixin-green.svg"
+                <img class="w-8 h-8 m-2" src="@/assets/social-icon/weixin-green.svg"
                      alt="social" @click="toSocial('weixin')"/>
               </template>
               <span> {{ social.weixin.value }}</span>
@@ -489,7 +500,7 @@ onMounted(async () => {
             <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>
           </div>
           <NText>
-            复制连接
+            {{ $t('person.drawer.copy') }}
           </NText>
         </div>
 
@@ -498,27 +509,9 @@ onMounted(async () => {
             <img class="w-8 h-8" src="@/assets/qrcode.svg" alt="add"/>
           </div>
           <NText>
-            生成qr码
+            {{ $t('person.drawer.qr') }}
           </NText>
         </div>
-
-<!--        <div class="h-full flex flex-col items-center">-->
-<!--          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">-->
-<!--            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>-->
-<!--          </div>-->
-<!--          <NText>-->
-<!--            分享微信-->
-<!--          </NText>-->
-<!--        </div>-->
-
-<!--        <div class="h-full flex flex-col items-center">-->
-<!--          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">-->
-<!--            <img class="w-8 h-8" src="@/assets/share.svg" alt="add"/>-->
-<!--          </div>-->
-<!--          <NText>-->
-<!--            分享line-->
-<!--          </NText>-->
-<!--        </div>-->
       </div>
     </n-drawer-content>
   </n-drawer>
@@ -566,9 +559,9 @@ onMounted(async () => {
 
         <NQrCode class="box-content"
                  :value="getCurrentUrl()"
-                 :size="200"
-                 :icon-src="personData.header"
-                 :icon-size="60"
+                 :size="240"
+                 :icon-src="logo"
+                 :icon-size="80"
                  :icon-border-radius="10"
                  error-correction-level="H"
                  color="#0288D1"/>

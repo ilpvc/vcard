@@ -21,6 +21,13 @@ export default {
             google: '谷歌导航',
             gaode: '高德导航',
             baidu: '百度导航',
+        },
+        social: {
+            title: '社交媒体'
+        },
+        drawer: {
+            copy: '复制链接',
+            qr: '生成qrcode'
         }
     },
     addPerson: {
@@ -44,6 +51,8 @@ export default {
             website: '网址',
             summary: '个人简介',
             input: '请输入',
+            employ_number: '工号',
+            employ_number_desc: '请输入工号',
         },
         social: {
             title: '社交媒体',

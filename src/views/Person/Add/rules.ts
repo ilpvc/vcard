@@ -50,5 +50,16 @@ export const addPersonRules: FormRules  = {
         },
         trigger: "blur"
     },
+    employ_number:{
+        required: true,
+        validator(rule: FormItemRule, value: string) {
+            console.log(value)
+            const reg = /^\d{6,10}$/
+            if (!reg.test(value)) {
+                return new Error('employ_number is incorrect!')
+            }
+        },
+        trigger: "blur"
+    }
 
 }
