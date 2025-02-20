@@ -264,7 +264,7 @@ onMounted(async () => {
         />
         <h2 class="text-2xl font-semibold mt-5">{{ personData.first_name + ' ' + personData.last_name }}</h2>
         <p class="text-sm opacity-50 mt-2">{{ personData.job }}</p>
-        <p class="text-sm  mt-2">{{$t('addPerson.info.employ_number')+':'+ personData.employ_number }}</p>
+        <p class="text-sm  mt-2">{{personData.employ_number }}</p>
       </div>
 
       <!-- 按钮区域 -->
