@@ -145,12 +145,13 @@ const formRef = ref<FormInst | null>(null)
 async function submit() {
   formRef.value?.validate(async (errors) => {
     if (!errors) {
-      submitData.value.social_media = JSON.stringify(social.value)
+      const s = {...submitData.value}
+      s.social_media = JSON.stringify(social.value)
       if (submitData.value.mobile)
-        submitData.value.mobile = regionSubmit.value.mobile + ' ' + submitData.value.mobile
+        s.mobile = regionSubmit.value.mobile + ' ' + submitData.value.mobile
       if (submitData.value.telephone)
-        submitData.value.telephone = regionSubmit.value.telephone + ' ' + submitData.value.telephone
-      const res = await addPerson(submitData.value)
+        s.telephone = regionSubmit.value.telephone + ' ' + submitData.value.telephone
+      const res = await addPerson(s)
       console.log(res)
       if (res.code === 406){
         message.error(res.message)
