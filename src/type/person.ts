@@ -6,7 +6,7 @@ export type Person = {
     company: string;
     created_at: string; // 或 Date 类型，取决于实际需求
     email: string;
-    employ_number;
+    employ_number:number;
     first_name: string;
     id: number;
     job: string;

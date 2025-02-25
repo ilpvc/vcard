@@ -264,7 +264,7 @@ onMounted(async () => {
         />
         <h2 class="text-2xl font-semibold mt-5">{{ personData.first_name + ' ' + personData.last_name }}</h2>
         <p class="text-sm opacity-50 mt-2">{{ personData.job }}</p>
-        <p class="text-sm  mt-2">{{personData.employ_number }}</p>
+<!--        <p class="text-sm  mt-2">{{personData.employ_number }}</p>-->
       </div>
 
       <!-- 按钮区域 -->
@@ -537,14 +537,14 @@ onMounted(async () => {
           </NText>
         </div>
 
-        <div class="h-full flex flex-col items-center" @click="directions('baidu')">
-          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">
-            <img class="w-12 h-12" src="@/assets/map/baidu-map.svg" alt="add"/>
-          </div>
-          <NText>
-            {{ $t('person.map.baidu') }}
-          </NText>
-        </div>
+<!--        <div class="h-full flex flex-col items-center" @click="directions('baidu')">-->
+<!--          <div class="w-12 h-12 bg-[#e1d384] flex items-center justify-center rounded-full mb-2">-->
+<!--            <img class="w-12 h-12" src="@/assets/map/baidu-map.svg" alt="add"/>-->
+<!--          </div>-->
+<!--          <NText>-->
+<!--            {{ $t('person.map.baidu') }}-->
+<!--          </NText>-->
+<!--        </div>-->
       </div>
     </n-drawer-content>
   </n-drawer>

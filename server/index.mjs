@@ -13,10 +13,10 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 const dbConfig = {
-    host: 'localhost',
-    user: 'root',
-    password: '123456', // Replace with your MySQL password
-    database: 'v-card', // Replace with your MySQL database name
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '123456',
+    database: process.env.DB_NAME || 'v-card',
     waitForConnections: true, // Wait for available connection if the pool is full
     connectionLimit: 10, // Maximum number of connections in the pool
     queueLimit: 0 // Unlimited queue length for waiting connections
