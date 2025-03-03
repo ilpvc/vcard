@@ -28,7 +28,7 @@ const message = useMessage();
 
 const submitData = ref<Omit<Person, 'id'>>({
   header: "",
-  address: "",
+  address: "luhua",
   code: "",
   company: 'huitong',
   created_at: "",
@@ -42,7 +42,7 @@ const submitData = ref<Omit<Person, 'id'>>({
   summary: "",
   telephone: "",
   website: "",
-  b_address: ''
+  b_address: "luhua"
 })
 
 const social = ref({
@@ -259,7 +259,7 @@ function toHome() {
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.ha')" path="address">
             <n-select size="large" :options="addressOptions" v-model:value="submitData.address"
-                      :placeholder="$t('addPerson.info.addressDesc')"/>
+                      :placeholder="$t('addPerson.info.addressDesc')" />
             <!--            <n-input size="large" v-model:value="submitData.address" :placeholder="$t('addPerson.address.changning')"/>-->
           </n-form-item>
           <n-form-item label-placement="top" :label="$t('addPerson.info.ba')" path="b_address">

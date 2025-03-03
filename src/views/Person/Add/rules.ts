@@ -39,7 +39,7 @@ export const addPersonRules: FormRules  = {
         trigger: "blur"
     },
     telephone: {
-        required: true,
+        required: false,
         validator(rule: FormItemRule, value: string) {
             const reg = /^[0-9\-]+$/;
             if (!value) {
