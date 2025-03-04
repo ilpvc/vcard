@@ -32,6 +32,7 @@ services:
       MYSQL_DATABASE: v-card
     volumes:
       - ./db/v-card.sql:/docker-entrypoint-initdb.d/v-card.sql  # 初始化数据库
+      - ./db/mysql:/var/lib/mysql
     ports:
       - "3306:3306"  # 将数据库的 3306 端口映射到宿主机
     networks:
@@ -47,6 +48,8 @@ services:
       - "80:80"  # 将前端应用的 80 端口映射到宿主机
     networks:
       - app_network
+    volumes:
+      - ./dist:/usr/share/nginx/html
     depends_on:
       - server  # 确保后端服务先启动
 

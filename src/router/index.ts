@@ -1,5 +1,6 @@
 // src/router/index.js
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import config from "@/config";
 
 const routes = [
     { path: '/:code?', component:()=>import("../views/Person/index.vue") },
@@ -7,7 +8,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(config.base),
     routes
 })
 
