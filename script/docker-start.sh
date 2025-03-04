@@ -3,7 +3,7 @@
 # 项目名称和仓库 URL
 REPO_URL="https://github.com/ilpvc/vcard.git"
 PROJECT_DIR="vcard"
-
+cd /opt
 # 检查 git 是否存在
 if ! command -v git &> /dev/null; then
     echo "git 未安装，正在下载代码压缩包..."
@@ -32,8 +32,18 @@ if ! command -v git &> /dev/null; then
         exit 1
     fi
 else
-    echo "git 已安装，正在克隆仓库..."
-    git clone "$REPO_URL" "$PROJECT_DIR"
+    # 如果项目目录已存在，则拉取最新代码
+    if [ -d "$PROJECT_DIR" ]; then
+        echo "项目目录已存在，正在拉取最新代码..."
+        cd "$PROJECT_DIR" || { echo "错误：无法进入项目目录 $PROJECT_DIR"; exit 1; }
+        git pull origin main
+        if [ $? -ne 0 ]; then
+            echo "警告：拉取代码失败，继续使用现有代码。"
+        fi
+    else
+        echo "git 已安装，正在克隆仓库..."
+        git clone "$REPO_URL" "$PROJECT_DIR"
+    fi
 fi
 
 # 进入项目目录

@@ -1,6 +1,6 @@
 const index = {
     baseUrl: '/api',
-    base: '/vcard'
+    base: '/vcard/'
 };
 
 export default index;
