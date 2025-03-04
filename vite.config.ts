@@ -6,7 +6,7 @@ import config from './src/config'
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [vue()],
-    base: config.base,
+    base: '/',
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
