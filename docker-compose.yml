@@ -4,9 +4,9 @@ services:
   # Node.js 后端服务
   server:
     build:
-      context: .
+      context: ./server
       dockerfile: ./server/Dockerfile
-    container_name: node_server
+    container_name: nodejs
     ports:
       - "3000:3000"  # 将 3000 端口映射到宿主机
     volumes:
@@ -43,13 +43,11 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: vite_frontend
+    container_name: vite
     ports:
       - "80:80"  # 将前端应用的 80 端口映射到宿主机
     networks:
       - app_network
-    volumes:
-      - ./dist:/usr/share/nginx/html
     depends_on:
       - server  # 确保后端服务先启动
 
