@@ -3,21 +3,17 @@ version: '3.8'
 services:
   # Node.js 后端服务
   server:
-    build:
-      context: ./server
-      dockerfile: ./Dockerfile
+    image: ilpvcx/vcard-server:1.0  # 使用已构建的后端镜像
     container_name: nodejs
     ports:
-      - "3000:3000"  # 将 3000 端口映射到宿主机
-    volumes:
-      - ./server:/usr/src/app  # 将后端代码挂载到容器中
+      - "3000:3000"
     environment:
       - NODE_ENV=production
       - DB_HOST=db  # 数据库地址，使用容器名 db
-      - DB_PORT=3306  # MySQL 默认端口
-      - DB_USER=root  # 数据库用户名
-      - DB_PASSWORD=123456  # 数据库密码
-      - DB_NAME=v-card  # 数据库名称
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=123456
+      - DB_NAME=v-card
     networks:
       - app_network
     depends_on:
@@ -34,18 +30,16 @@ services:
       - ./db/v-card.sql:/docker-entrypoint-initdb.d/v-card.sql  # 初始化数据库
       - ./db/mysql:/var/lib/mysql
     ports:
-      - "3306:3306"  # 将数据库的 3306 端口映射到宿主机
+      - "3306:3306"
     networks:
       - app_network
 
   # Nginx 前端服务
   frontend:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: ilpvcx/vcard:1.0  # 使用已构建的前端镜像
     container_name: vite
     ports:
-      - "80:80"  # 将前端应用的 80 端口映射到宿主机
+      - "80:80"
     networks:
       - app_network
     depends_on:
