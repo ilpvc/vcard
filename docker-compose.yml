@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Node.js 后端服务
   server:
-    image: ilpvcx/vcard-server:1.0  # 使用已构建的后端镜像
+    image: ilpvcx/vcard-server  # 使用已构建的后端镜像
     container_name: nodejs
     ports:
       - "3000:3000"
@@ -36,7 +36,7 @@ services:
 
   # Nginx 前端服务
   frontend:
-    image: ilpvcx/vcard:1.0  # 使用已构建的前端镜像
+    image: ilpvcx/vcard  # 使用已构建的前端镜像
     container_name: vite
     ports:
       - "80:80"
